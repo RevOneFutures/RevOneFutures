@@ -14,14 +14,6 @@
     {
       "src": "/api/preview/(.*)",
       "dest": "/api/preview/[templateId].ts"
-    },
-    {
-      "src": "/preview.html",
-      "dest": "/preview.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
     }
   ]
 }
