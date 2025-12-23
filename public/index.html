@@ -19,6 +19,12 @@
       margin-bottom: 30px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    .header-logo {
+      max-width: 400px;
+      height: auto;
+      margin-bottom: 20px;
+      display: block;
+    }
     .header h1 { 
       color: #000; 
       margin-bottom: 8px;
@@ -110,7 +116,8 @@
 </head>
 <body>
   <div class="header">
-    <h1>📧 RevOne Email Templates</h1>
+    <img src="/static/images/Logo Alternative.png" alt="RevOne Futures Logo" class="header-logo">
+    <h1>RevOne Email Templates</h1>
     <p>Browse and preview all email templates. Click any template to preview it.</p>
   </div>
   <div id="templates" class="templates-grid">
@@ -141,7 +148,7 @@
               <strong>Variables:</strong>
               ${template.variables.map(v => `${v.name}${v.required ? ' *' : ''}`).join(', ')}
             </div>
-            <button class="preview-btn" onclick="event.stopPropagation(); window.open('/preview.html?id=${template.id}', '_blank')">
+            <button class="preview-btn" onclick="event.stopPropagation(); window.location.href='/preview.html?id=${template.id}'">
               Preview Template
             </button>
           </div>
