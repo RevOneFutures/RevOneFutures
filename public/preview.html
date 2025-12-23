@@ -204,7 +204,7 @@
       }
 
       try {
-        const response = await fetch('/api/templates');
+        const response = await fetch('/templates.json');
         if (!response.ok) {
           throw new Error('Failed to load templates');
         }
