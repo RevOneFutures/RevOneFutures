@@ -1,0 +1,32 @@
+{
+  "templates": [
+    {
+      "id": "revone-account-created",
+      "name": "Account Created",
+      "description": "Email sent when a new simulated funded account is created",
+      "category": "Account Management",
+      "file": "revone-account-created.tsx",
+      "variables": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "default": "Valued Customer",
+          "description": "Customer's name"
+        },
+        {
+          "name": "accountLogin",
+          "type": "string",
+          "required": false,
+          "default": "ACCOUNT123",
+          "description": "Account login ID"
+        }
+      ],
+      "preview": {
+        "name": "John Doe",
+        "accountLogin": "ACCOUNT12345"
+      }
+    }
+  ]
+}
+

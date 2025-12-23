@@ -1,0 +1,34 @@
+{
+  "name": "revone-emails-",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx dev-server.ts",
+    "export": "tsx export-html.ts",
+    "build": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@react-email/components": "^1.0.2",
+    "@react-email/render": "^2.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "resend": "^6.6.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vercel/node": "^3.0.0",
+    "dotenv": "^17.2.3",
+    "email": "^0.2.6",
+    "express": "^5.2.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

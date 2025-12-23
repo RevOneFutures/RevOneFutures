@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RevOne Email Templates</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header h1 { 
+      color: #000; 
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+    .header p { 
+      color: #666;
+      font-size: 16px;
+    }
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .template-card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      border: 1px solid #e0e0e0;
+    }
+    .template-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      border-color: #ED2025;
+    }
+    .template-card h3 {
+      color: #000;
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+    .template-card .category {
+      color: #ED2025;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .template-card .description {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .template-card .variables {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 16px;
+      padding: 8px;
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
+    .template-card .variables strong {
+      color: #666;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .template-card .preview-btn {
+      background: #000;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 500;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .template-card .preview-btn:hover {
+      background: #333;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #fcc;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📧 RevOne Email Templates</h1>
+    <p>Browse and preview all email templates. Click any template to preview it.</p>
+  </div>
+  <div id="templates" class="templates-grid">
+    <div class="loading">Loading templates...</div>
+  </div>
+
+  <script>
+    async function loadTemplates() {
+      try {
+        const response = await fetch('/api/templates');
+        if (!response.ok) {
+          throw new Error('Failed to load templates');
+        }
+        const data = await response.json();
+        const container = document.getElementById('templates');
+        
+        if (!data.templates || data.templates.length === 0) {
+          container.innerHTML = '<div class="error">No templates found.</div>';
+          return;
+        }
+        
+        container.innerHTML = data.templates.map(template => `
+          <div class="template-card" onclick="window.location.href='/preview.html?id=${template.id}'">
+            <div class="category">${template.category}</div>
+            <h3>${template.name}</h3>
+            <p class="description">${template.description}</p>
+            <div class="variables">
+              <strong>Variables:</strong>
+              ${template.variables.map(v => `${v.name}${v.required ? ' *' : ''}`).join(', ')}
+            </div>
+            <button class="preview-btn" onclick="event.stopPropagation(); window.open('/preview.html?id=${template.id}', '_blank')">
+              Preview Template
+            </button>
+          </div>
+        `).join('');
+      } catch (error) {
+        document.getElementById('templates').innerHTML = 
+          `<div class="error">Error loading templates: ${error.message}<br><br>Make sure the API is running and accessible.</div>`;
+      }
+    }
+    loadTemplates();
+  </script>
+</body>
+</html>
+

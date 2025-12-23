@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Preview - RevOne Emails</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      padding: 20px 30px;
+      background: #000;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 { 
+      margin: 0; 
+      font-size: 20px;
+      font-weight: 500;
+    }
+    .back-btn {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #555;
+    }
+    .content-wrapper {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .controls {
+      width: 350px;
+      padding: 30px;
+      background: #f9f9f9;
+      border-right: 1px solid #ddd;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .controls h3 { 
+      margin-bottom: 20px;
+      color: #000;
+      font-size: 18px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #ED2025;
+      box-shadow: 0 0 0 3px rgba(237, 32, 37, 0.1);
+    }
+    .form-group small {
+      color: #666;
+      font-size: 12px;
+      display: block;
+      margin-top: 4px;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 25px;
+    }
+    .button-group button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #000;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #333;
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #000;
+      border: 1px solid #ddd;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    .preview-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .preview-header {
+      padding: 15px 30px;
+      background: #f9f9f9;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preview-header h2 {
+      font-size: 16px;
+      color: #333;
+      margin: 0;
+    }
+    iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background: white;
+    }
+    .error {
+      padding: 20px;
+      background: #fee;
+      color: #c33;
+      border-radius: 4px;
+      margin: 20px;
+    }
+    .loading {
+      padding: 40px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📧 Email Template Preview</h1>
+      <a href="/" class="back-btn">← Back to Templates</a>
+    </div>
+    <div class="content-wrapper">
+      <div class="controls">
+        <h3>Template Variables</h3>
+        <div id="variables-form" class="loading">Loading template...</div>
+        <div class="button-group" id="button-group" style="display: none;">
+          <button class="btn-primary" onclick="updatePreview()">Update Preview</button>
+          <button class="btn-secondary" onclick="window.open(iframe.src, '_blank')">Open in New Tab</button>
+          <button class="btn-secondary" onclick="copyHTML()">Copy HTML</button>
+        </div>
+      </div>
+      <div class="preview-container">
+        <div class="preview-header">
+          <h2 id="template-name">Loading...</h2>
+        </div>
+        <iframe id="emailPreview"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateId = urlParams.get('id');
+    let templateData = null;
+    const iframe = document.getElementById('emailPreview');
+    const formContainer = document.getElementById('variables-form');
+    const buttonGroup = document.getElementById('button-group');
+    const templateName = document.getElementById('template-name');
+
+    async function loadTemplate() {
+      if (!templateId) {
+        formContainer.innerHTML = '<div class="error">No template ID provided</div>';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/templates');
+        if (!response.ok) {
+          throw new Error('Failed to load templates');
+        }
+        const data = await response.json();
+        templateData = data.templates.find(t => t.id === templateId);
+        
+        if (!templateData) {
+          formContainer.innerHTML = '<div class="error">Template not found</div>';
+          templateName.textContent = 'Template Not Found';
+          return;
+        }
+
+        templateName.textContent = templateData.name;
+
+        // Build form
+        formContainer.innerHTML = templateData.variables.map(v => `
+          <div class="form-group">
+            <label>
+              ${v.name} ${v.required ? '<span style="color:#ED2025">*</span>' : ''}
+            </label>
+            <input 
+              type="text" 
+              id="var-${v.name}" 
+              value="${templateData.preview[v.name] || v.default || ''}"
+              placeholder="${v.description}"
+            >
+            <small>${v.description}</small>
+          </div>
+        `).join('');
+
+        buttonGroup.style.display = 'flex';
+        updatePreview();
+      } catch (error) {
+        formContainer.innerHTML = `<div class="error">Error loading template: ${error.message}</div>`;
+        templateName.textContent = 'Error';
+      }
+    }
+
+    function updatePreview() {
+      if (!templateData) return;
+      
+      const params = new URLSearchParams();
+      templateData.variables.forEach(v => {
+        const input = document.getElementById(`var-${v.name}`);
+        if (input && input.value) {
+          params.append(v.name, input.value);
+        }
+      });
+      
+      iframe.src = `/api/preview/${templateId}?${params.toString()}`;
+    }
+
+    async function copyHTML() {
+      try {
+        const response = await fetch(iframe.src);
+        const html = await response.text();
+        await navigator.clipboard.writeText(html);
+        alert('✅ HTML copied to clipboard!');
+      } catch (error) {
+        alert('❌ Failed to copy HTML: ' + error.message);
+      }
+    }
+
+    // Auto-update preview when inputs change (with debounce)
+    let updateTimeout;
+    document.addEventListener('input', (e) => {
+      if (e.target.id && e.target.id.startsWith('var-')) {
+        clearTimeout(updateTimeout);
+        updateTimeout = setTimeout(updatePreview, 500);
+      }
+    });
+
+    loadTemplate();
+  </script>
+</body>
+</html>
+
