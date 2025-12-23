@@ -7,8 +7,8 @@
  * For local development, leave as empty string to use relative paths
  */
 
-// Update this after Vercel deployment!
-export const BASE_URL = ''; // e.g., 'https://your-project.vercel.app'
+// Production Vercel URL
+export const BASE_URL = 'https://revonefutues.vercel.app';
 
 export const getImageUrl = (path: string): string => {
   if (BASE_URL) {
